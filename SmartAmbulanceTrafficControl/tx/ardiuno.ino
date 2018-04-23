@@ -84,7 +84,6 @@ void setup()
 	TIMSK1 |= (1 << TOIE1);   // enable timer overflow interrupt
 	interrupts();             // enable all interrupts
 
-	
 	if(update==0)
 	{
 		update_url_1 = url_1+"0";
@@ -95,7 +94,6 @@ void setup()
 		update=1;
 	}
 	update_url_1="";
-
 
 	// set up the LCD's number of columns and rows:
 	lcd.begin(16, 2);
@@ -146,11 +144,9 @@ void rfid()
 ISR(TIMER1_OVF_vect)
 {
 	TCNT1 = timer1_counter;   // preload timer
-
-	index=index+1;
+	index=index+1; //increment the index for every 0.5 sec
 	temp = read_adc();
 }
-
 
 void loop()
 {
@@ -224,7 +220,6 @@ void loop()
 		pulse_count=0;
 		delay(20);
 	}
-
 
 	/* Updation of RFID detection into cloud */ 
 	if( (update==0) && (index==50))
