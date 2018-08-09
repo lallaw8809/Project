@@ -1,0 +1,67 @@
+Description:
+------------
+	Kernel module (led_button.c) is to ON the LED when button is pressed. User space application (app.c) reads
+the status of the LED, OFF the led and update the status into a file (status). spi (spi.py) user space application is to 
+reads the adc value, status of the led and updates into URL (http://www.bpiot.dx.am/rpi/display.php).
+
+Folder structure :
+==================
+	led_button.c : LED and Button kernel source code.
+	app.c        : User space application code to read the status of the LED and update into file.
+	spi.py       : Application code to reads the ADC value and status of the LED. Updates into URL.
+
+Procedure followed to bring RPI3 :
+===================================
+	By default, RPI3 does not supports to build the kernel modules, so needs to follow the following steps to build the
+kernel module.
+	$ git clone --depth=1 https://github.com/raspberrypi/linux
+	$ sudo apt-get install bc
+	$ cd linux
+	$ KERNEL=kernel7
+	$ make bcm2709_defconfig
+	$ make -j4 zImage modules dtbs
+	$ sudo make modules_install
+	$ sudo cp arch/arm/boot/dts/*.dtb /boot/
+	$ sudo cp arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
+	$ sudo cp arch/arm/boot/dts/overlays/README /boot/overlays/
+	$ sudo cp arch/arm/boot/zImage /boot/$KERNEL.img
+
+Ref :
+-----
+	1. https://www.codeproject.com/Articles/1032794/Simple-I-O-device-driver-for-RaspberryPi
+	2. https://www.raspberrypi.org/documentation/linux/kernel/building.md
+
+Procedure to run the Kernel module and application to update into cloud :
+==========================================================================
+Compile the kernel code, which will generate a .ko file
+$ make clean 
+$ make
+
+Clear the kernel module logs
+$  sudo dmesg -C
+
+Insert the led_button kernel module
+$ sudo insmod led_button.ko
+
+Check the device name, major number and minor number in kernel logs
+$dmesg
+Example :
+	sudo mknod /dev/led_button c 243 0
+
+Create a device node
+$ sudo mknod /dev/led_button c 243 0
+
+Chnage the permission
+$ sudo chmod 777 /dev/led_button
+
+Run the Linux application code to get the led status
+$ ./app &
+
+Open new terminal
+Run the spi.py to get the adc value and led status to update into cloud
+$ python spi.py
+
+Cheach the URL to check the sensor data
+http://www.bpiot.dx.am/rpi/display.php
+ 
+
