@@ -1,1 +1,0 @@
-cmd_/home/pi/Desktop/project/led_button.ko := ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/pi/Desktop/project/led_button.ko /home/pi/Desktop/project/led_button.o /home/pi/Desktop/project/led_button.mod.o ;  true
